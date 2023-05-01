@@ -1,0 +1,166 @@
+{% extends './main.html' %} {% block content %}
+{% load poll_extras %}
+
+<head>
+    <title>Pokeset - Dashboard</title>
+</head>
+
+<button onclick='location.href="{% url 'profiles' %}"' class="back_button">Back</button>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<script>
+    $(document).ready(function(){
+        $("#nameInput").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $("#table_id tr").filter(function() {
+                $(this).toggle($(this).find("td:eq(0)").text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function(){
+        $("#typeInput").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $("#table_id tr").filter(function() {
+                $(this).toggle($(this).find("td:eq(1)").text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function(){
+        $("#locationInput").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $("#table_id tr").filter(function() {
+                $(this).toggle($(this).find("td:eq(2)").text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+</script>
+
+<div class="filters">
+    <input id ="nameInput" placeholder="Name" type="search"></input>
+    <input id ="typeInput" placeholder="Type(s)" type="search"></input>
+    <input id ="locationInput" placeholder="Location" type="search"></input>
+    <button style="height:50px;width:50px" class="big_bottom_button" onclick = "open_modal('delete_profile')"><img src="/static/trash.png"></button>
+</div>
+<section class="poke_table_section">
+    <div id="poke_table_container">
+
+        <table id="table_id" class="display">
+            {% comment %}
+            <thead>
+                <tr>
+                    <th>Column 1</th>
+                    <th>Column 2</th>
+                    <th>Column 1</th>
+                    <th>Column 2</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Row 1 Data 1</td>
+                    <td>Row 1 Data 2</td>
+                    <td>Row 1 Data 1</td>
+                    <td>Row 1 Data 2</td>
+                </tr>
+                <tr>
+                    <td>Row 2 Data 1</td>
+                    <td>Row 2 Data 2</td>
+                    <td>Row 2 Data 1</td>
+                    <td>Row 2 Data 2</td>
+                </tr>
+            </tbody> {% endcomment %}
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Location(s)</th>
+                    <th>Super Effective Against</th>
+                </tr>
+                <thead>
+                    <tbody>
+                        {% for pokemon in pokemon_data %}
+                        <tr onclick="location.href='{% url 'detailed' pokemon.id %}'">
+                            <td width="30%">   
+                                <div id="name_col">
+                                    {%if pokemon.image_url is not None %}
+                                    <img src="{{pokemon.image_url}}" loading="lazy">
+                                    {% else %}
+                                    {% load static %}
+                                    <img src="{% static 'canvas.png' %}">
+                                    {% endif %}
+                                    {{pokemon.name}}</div>
+                            </td>
+                            <td width="20%">
+                                <div class="pokemon_types_dashboard">
+                                    {{pokemon.type_one|typecolor}} {%if pokemon.type_two is not None %}{{pokemon.type_two|typecolor}}{% endif %}
+                                </div>    
+                               
+                            </td>
+                            <td>{{pokemon.can_find_in.all|join:" "}}</td>
+                            <td width="30%">
+                                <div class="pokemon_types_dashboard">
+                                    {% for type in pokemon.offensive_2%}
+                                    {{type|typecolor}}
+                                     {% endfor %}
+                                     {% for type in pokemon.offensive_4%}
+                                    {{type|typecolor}}
+                                     {% endfor %}
+                                </div>
+                            </td>
+                            {% comment %} <td width="20%">
+                                <div class="pokemon_types_dashboard">
+                                    {% for type in pokemon.offensive_0.5%}
+                                    {{type|typecolor}}
+                                    {% endfor %}
+                                </div>
+                            </td> {% endcomment %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+        </table>
+        <div style="display:none" class="profile_popup" id="delete_profile">
+            <div class="profiler_add">
+                <h1>Are you sure?</h1> 
+                <p>This will delete the current profile</p>
+                <button type="button" onclick='location.href="{% url 'delete_profile' profile_id%}"'>Yes</button>
+                <br><br>
+                <button type="button" onclick='close_modal("delete_profile")'>Cancel</button>
+            </div>
+        </div>
+
+        {% comment %}
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.css"> {% endcomment %}
+        <link rel="stylesheet" {% load static %} href="{% static 'style_login.css' %}?{% now "U" %}">
+        <link rel="stylesheet" {% load static %} href="{% static 'table.css' %}">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"></script>
+        <script>
+            $(document).ready(function() {
+                $('#table_id').DataTable({
+                    scrollY: '35vh',
+                    searching: false,
+                    "lengthMenu": [10, 20, 40]
+                })
+            });
+        </script>
+
+    </div>
+    <button onclick="location.href='{% url 'create_pokemon' profile_id %}'" id="add_pokemon_button">Add Pokemon</button>
+    <script>
+        function open_modal(id) {
+            document.getElementById(id).style.display = "block";
+          }
+          
+          function close_modal(id) {
+            document.getElementById(id).style.display = "none";
+          }
+      
+    </script>
+</section>
+{% endblock %}

@@ -1,0 +1,61 @@
+<!-- Display a list of the user's current profiles, and allow them to
+    create new ones. -->
+
+{% extends './main.html' %}
+{% block content %}
+{% comment %} the now "U" thing is to make css refresh, remove later {% endcomment %}
+<link rel="stylesheet" {% load static %} href="{% static 'style_login.css' %}?{% now "U" %}">
+
+<head>
+    <title>Pokeset - Profiles</title>
+</head>
+
+<div class = "profiles_box">
+    {{ form.errors }}
+        {% for profile in profiles %}
+        <div class="profile">
+            <button name = "{{profile.name}}_button" class="profile_circles"
+                    style="background-color:{{profile.colour}}" onclick="location.href='{% url 'dashboard' profile.id %}'">
+            
+            </button>
+            <h3 name = "{{profile.name}}">{{profile.name}}</h3>
+            <h4>{{profile.description}}</h4>
+        </div>
+        {% endfor %}
+        <div class="profile">
+            <button name = "new_profile_circle" class = "profile_circles" onclick="open_add_profile()">
+                +
+            </button>
+            <h3> </h3>
+        </div>
+    <div class="profile_popup" id="add_profile">
+        <div class="profiler_add">
+            
+            <form action="{% url 'profiles' %}" method="POST" class="profile_container">
+            <h1>Add Save</h1> 
+            {% csrf_token %}
+            
+            {{ form.name.label }} {{ form.name }}
+            <br><br>
+            {{ form.description.label }} {{ form.description }}
+            <br><br>        
+            <button type="submit" class="confirm_button"  onclick="location.href='#'">Save</button>
+            <br><br>
+            <button type="button" class="link_button" onclick="close_add_profile()">Close</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function open_add_profile() {
+      document.getElementById("add_profile").style.display = "block";
+    }
+    
+    function close_add_profile() {
+      document.getElementById("add_profile").style.display = "none";
+    }
+
+</script>
+
+{% endblock %}

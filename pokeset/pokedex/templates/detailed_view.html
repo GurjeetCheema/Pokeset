@@ -1,0 +1,150 @@
+{% extends './main.html' %} {% block content %}
+{% load poll_extras %}
+
+<link rel="stylesheet" {% load static %} href="{% static 'style.css' %}?{% now "U" %}">
+
+<head>
+    <title>Pokeset - Detailed View</title>
+</head>
+
+<button onclick='location.href="{% url 'dashboard' profile_id %}"' class="back_button">Back</button>
+
+<section class="poke_view_section" onload = " resize_elements()">
+    <div id="stats">
+        <div id="profile">
+            <h2>{{pokemon_data.name}}</h2>
+            {%if pokemon_data.image_url is not None %}
+            <img src="{{pokemon_data.image_url}}" loading="lazy">
+            {% else %}
+            {% load static %}
+            <img src="{% static 'canvas.png' %}">
+            {% endif %}
+        </div>
+        <div class = "evolution_section">
+            <div class = "evolution_box" >
+                {% if pokemon_data.evolves_from %}
+                    <img class="evolution_circles" src="{{pokemon_data.evolves_from.image_url}}" loading="lazy" onclick="location.href='{% url 'detailed' pokemon_data.evolves_from.id %}'">
+                {%endif%}
+            </div>
+            <div class = "evolution_box">
+                <img class="evolution_circles" src="{{pokemon_data.image_url}}" loading="lazy"  onclick="location.href='{% url 'detailed' pokemon_data.id %}'">
+            </div>
+            <div class = "evolution_box">
+                {% for evo_pokemon in pokemon_data.evolves_into.all%}
+                <img class = "evolution_circles" src="{{evo_pokemon.image_url}}" loading="lazy"  onclick="location.href='{% url 'detailed' evo_pokemon.id %}'">
+                {% endfor %}
+            </div>
+        </div>
+        <div>
+            <h3>Description</h3>
+            <p>{{pokemon_data.description}}</p>
+        </div>
+        <div class="stat_section" id="type">
+            <h3>Type(s)</h3>
+            <div class="stat_bubble">
+                <div class="stat_bubble_contents">
+                    <p>
+                        {{pokemon_data.type_one|typecolor}} {{pokemon_data.type_two|typecolor}}
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="stat_section" id="locations">
+            <h3>Locations</h3>
+            <div class="stat_bubble">
+                    <div class="stat_bubble_contents">
+                        <div class="pokemon_types_dashboard ">
+                            {% for location in pokemon_data.can_find_in.all %}
+                            <span class="location_name">{{location.name}}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+    
+                    
+            </div>
+        </div>
+        <div class="stat_section" n id="effective">
+            <h4>Weak To</h4>
+            <div class="stat_bubble">
+                <div class="stat_bubble_contents">
+                        <p class="damage_multiplier">Takes 400% Damage</p>
+                    <div class="pokemon_types_dashboard">
+                     
+                        {% for type in pokemon_data.offensive_4 %}
+                                    {{type|typecolor}}
+                        {% empty %}
+                            <p><i>none</i></p>
+                        {% endfor %}
+                  
+                    </div>
+                    <p class="damage_multiplier">Takes 200% Damage</p>
+                    <div class="pokemon_types_dashboard">
+                        {% for type in pokemon_data.offensive_2 %}
+                                    {{type|typecolor}}
+                        {% empty %}
+                            <p><i>none</i></p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="stat_section" id="weakness">
+            <h4>Resistant To</h4>
+            <div class="stat_bubble">
+                <div class="stat_bubble_contents">
+                    <p class="damage_multiplier">Takes 50% Damage</p>
+                        <div class="pokemon_types_dashboard">
+                            {% for type in pokemon_data.offensive_05 %}
+                                        {{type|typecolor}}
+                            {% empty %}
+                                <p><i>none</i></p>
+                            {% endfor %}
+                        </div>
+                        <p class="damage_multiplier">Takes 25% Damage</p>
+                    <div class="pokemon_types_dashboard">
+                        {% for type in pokemon_data.offensive_025%}
+                                {{type|typecolor}}
+                        {% empty %}
+                            <p><i>none</i></p>
+                        {% endfor %}
+                    </div>
+                    <p class="damage_multiplier">Takes 0% Damage</p>
+                    <div class="pokemon_types_dashboard">
+                        {% for type in pokemon_data.offensive_0%}
+                                {{type|typecolor}}
+                        {% empty %}
+                            <p><i>none</i></p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="stat_section" id="abilities">
+            <h3>Abilities</h3>
+            <div class="stat_bubble">
+                {% for ability in pokemon_data.abilities.all%}
+                <p>{{ability}}</p>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="stat_section" id="moves_section">
+            <h3>Moves</h3>
+            <div class="stat_bubble">
+                <div class="stat_bubble_contents">
+                    {% for move in pokemon_data.can_learn.all%}
+                    <div class="move_description">
+                        <p>{{move}}</p>
+                        {{move.type|typecolor}}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    <button class="big_bottom_button" onclick='location.href="{% url 'edit_pokemon' pokemon_data.id %}"'>Edit Pokemon</button>
+</section>
+
+{% endblock %}
