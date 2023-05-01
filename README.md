@@ -1,6 +1,6 @@
-#Pokeset
+# Pokeset
 
-About
+## About
 
 Pokeset is a web application that allows for easy recording and querying of
 custom Pokemon. Randomizers are popular game modifications wherein various
@@ -24,7 +24,8 @@ The Pokeset website has the following functionalities:
    * Evolution
 
 * Search and filter Pokemon
-Set-up
+* 
+## Set-up
 
 Follow these steps to run this repository locally:
 
@@ -48,7 +49,7 @@ default-character-set = utf8
 ```
 7. You should now be able to run the server with ```python3 manage.py runserver```. Don't forget to migrate (```python3 manage.py migrate```).
 
-Testing
+## Testing
 
 Various test cases for the website have been implemented using automated testing. Everytime a push is made to the main branch, Github Actions will run each test case to check that the website is working correctly.
 
